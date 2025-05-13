@@ -16,9 +16,9 @@ var _s = __turbopack_context__.k.signature();
 ;
 // Array de rutas de las imágenes del carrusel
 const carouselImages = [
-    "/christopher-gower-m_HRfLhgABo-unsplash.jpg",
-    "/farzad-p-xSl33Wxyc-unsplash.jpg",
-    "/ferenc-almasi-eYpcLDXHVb0-unsplash.jpg"
+    "/portadaCarousel1.jpg",
+    "/portadaCarousel2.jpg",
+    "/portadaCarousel3.jpg"
 ];
 const Carousel = ({ text1, text2, text3, text4 })=>{
     _s();
@@ -32,7 +32,7 @@ const Carousel = ({ text1, text2, text3, text4 })=>{
                         "Carousel.useEffect.interval": (prevIndex)=>(prevIndex + 1) % carouselImages.length
                     }["Carousel.useEffect.interval"]);
                 }
-            }["Carousel.useEffect.interval"], 50000); // Cambia de imagen cada 8 segundos
+            }["Carousel.useEffect.interval"], 5000); // Cambia de imagen cada 5 segundos
             // Limpia el intervalo cuando el componente se desmonta
             return ({
                 "Carousel.useEffect": ()=>clearInterval(interval)
@@ -185,7 +185,7 @@ const Products = ()=>{
                 "Products.useEffect.fetchProductosAleatorios": async ()=>{
                     try {
                         console.log("Obteniendo productos aleatorios...");
-                        // 1. Obtener todos los productos
+                        // 1. Obtener todos los productos incluyendo el id_img
                         const { data: productosData, error: productosError } = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$supabaseClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["supabase"].from("productos").select("id_producto, nombre_producto");
                         if (productosError) {
                             throw productosError;
@@ -194,17 +194,22 @@ const Products = ()=>{
                             setError("No se encontraron productos");
                             return;
                         }
-                        // 2. Seleccionar 8 productos aleatorios (en lugar de 5)
+                        // 2. Seleccionar 8 productos aleatorios
                         const productosAleatorios = getRandomItems(productosData, 8);
                         console.log("Productos aleatorios seleccionados:", productosAleatorios);
-                        // 3. Para cada producto aleatorio, obtener su mejor precio
+                        // 3. Para cada producto aleatorio, obtener su mejor precio y su imagen
                         const productosConPrecios = [];
                         const cantidadesIniciales = {};
                         for (const producto of productosAleatorios){
                             // Obtener los precios para este producto
                             const { data: preciosData, error: preciosError } = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$supabaseClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["supabase"].from("precios").select(`
               precio_producto,
-              establecimientos:id_establecimiento(nombre_establecimiento)
+              id_establecimiento,
+              establecimientos(
+                nombre_establecimiento, 
+                direccion_establecimiento, 
+                municipio_establecimiento
+              )
             `).eq("id_producto", producto.id_producto).order("precio_producto", {
                                 ascending: true
                             }).limit(1);
@@ -212,19 +217,24 @@ const Products = ()=>{
                                 console.error(`Error al obtener precios para el producto ${producto.id_producto}:`, preciosError);
                                 continue;
                             }
+                            // Obtener la imagen si existe
+                            let imageUrl = undefined;
                             if (preciosData && preciosData.length > 0) {
                                 const precio = preciosData[0];
                                 productosConPrecios.push({
                                     id: producto.id_producto,
                                     nombre: producto.nombre_producto,
                                     precio: precio.precio_producto,
-                                    establecimiento: precio.establecimientos?.nombre_establecimiento || "Desconocido"
+                                    establecimiento: precio.establecimientos?.nombre_establecimiento || "Desconocido",
+                                    direccion_establecimiento: precio.establecimientos?.direccion_establecimiento,
+                                    municipio_establecimiento: precio.establecimientos?.municipio_establecimiento,
+                                    id_establecimiento: precio.id_establecimiento
                                 });
                                 // Inicializar cantidad para este producto
                                 cantidadesIniciales[producto.id_producto] = 1;
                             }
                         }
-                        console.log("Productos con precios:", productosConPrecios);
+                        console.log("Productos con precios e imágenes:", productosConPrecios);
                         setProductos(productosConPrecios);
                         setCantidades(cantidadesIniciales);
                     } catch (error) {
@@ -238,21 +248,19 @@ const Products = ()=>{
             fetchProductosAleatorios();
         }
     }["Products.useEffect"], []);
-    // Función para obtener elementos aleatorios de un array
+    // Resto de funciones auxiliares
     const getRandomItems = (arr, count)=>{
         const shuffled = [
             ...arr
         ].sort(()=>0.5 - Math.random());
         return shuffled.slice(0, count);
     };
-    // Función para incrementar la cantidad
     const incrementarCantidad = (productoId)=>{
         setCantidades((prev)=>({
                 ...prev,
                 [productoId]: (prev[productoId] || 1) + 1
             }));
     };
-    // Función para decrementar la cantidad (mínimo 1)
     const decrementarCantidad = (productoId)=>{
         setCantidades((prev)=>({
                 ...prev,
@@ -260,15 +268,19 @@ const Products = ()=>{
             }));
     };
     const { addItem, openCart } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$index$2f$carrito$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCart"])();
-    // Reemplazar la función agregarALista
+    // Actualizar función agregarALista para incluir correctamente la cantidad
     const agregarALista = (producto, cantidad)=>{
+        // Verificar que la cantidad sea al menos 1
+        const cantidadFinal = Math.max(1, cantidad);
+        console.log(`Añadiendo ${cantidadFinal} unidades de ${producto.nombre} al carrito`);
         addItem({
             id: producto.id,
             nombre: producto.nombre,
             precio: producto.precio,
             establecimiento: producto.establecimiento
-        }, cantidad);
-        openCart(); // Abre el carrito al agregar un producto
+        }, cantidadFinal); // Aquí pasas la cantidad como segundo parámetro
+        // Abre el carrito al agregar un producto
+        openCart();
     };
     // Funciones para el slider
     const nextSlide = ()=>{
@@ -295,7 +307,7 @@ const Products = ()=>{
             children: "Cargando productos..."
         }, void 0, false, {
             fileName: "[project]/src/app/components/sliderproducts.tsx",
-            lineNumber: 204,
+            lineNumber: 231,
             columnNumber: 12
         }, this);
     }
@@ -305,7 +317,7 @@ const Products = ()=>{
             children: error
         }, void 0, false, {
             fileName: "[project]/src/app/components/sliderproducts.tsx",
-            lineNumber: 208,
+            lineNumber: 235,
             columnNumber: 12
         }, this);
     }
@@ -333,17 +345,17 @@ const Products = ()=>{
                             d: "M15 19l-7-7 7-7"
                         }, void 0, false, {
                             fileName: "[project]/src/app/components/sliderproducts.tsx",
-                            lineNumber: 234,
+                            lineNumber: 261,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/sliderproducts.tsx",
-                        lineNumber: 227,
+                        lineNumber: 254,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                    lineNumber: 222,
+                    lineNumber: 249,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -355,18 +367,31 @@ const Products = ()=>{
                             className: "bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col h-[500px] min-w-[275px] max-w-[300px] flex-1 overflow-hidden",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "h-40 bg-gray-200 rounded-lg mb-4 flex items-center justify-center flex-shrink-0",
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                    className: "h-40 bg-gray-100 rounded-lg mb-4 flex items-center justify-center flex-shrink-0 relative overflow-hidden",
+                                    children: producto.imagen ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Image, {
+                                        src: producto.imagen,
+                                        alt: producto.nombre,
+                                        fill: true,
+                                        sizes: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
+                                        style: {
+                                            objectFit: "contain"
+                                        },
+                                        className: "p-2"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/components/sliderproducts.tsx",
+                                        lineNumber: 286,
+                                        columnNumber: 21
+                                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: "text-gray-400 text-center px-2",
                                         children: producto.nombre
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                        lineNumber: 258,
-                                        columnNumber: 19
+                                        lineNumber: 295,
+                                        columnNumber: 21
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                    lineNumber: 257,
+                                    lineNumber: 284,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -377,7 +402,7 @@ const Products = ()=>{
                                             children: producto.nombre
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                            lineNumber: 265,
+                                            lineNumber: 303,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -388,7 +413,7 @@ const Products = ()=>{
                                                     children: "Menor precio en:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                                    lineNumber: 269,
+                                                    lineNumber: 307,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -396,13 +421,21 @@ const Products = ()=>{
                                                     children: producto.establecimiento
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                                    lineNumber: 272,
+                                                    lineNumber: 310,
                                                     columnNumber: 21
+                                                }, this),
+                                                producto.municipio_establecimiento && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                    className: "text-gray-500 text-xs",
+                                                    children: producto.municipio_establecimiento
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/app/components/sliderproducts.tsx",
+                                                    lineNumber: 314,
+                                                    columnNumber: 23
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                            lineNumber: 268,
+                                            lineNumber: 306,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -413,13 +446,13 @@ const Products = ()=>{
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                            lineNumber: 276,
+                                            lineNumber: 319,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                    lineNumber: 264,
+                                    lineNumber: 302,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -430,7 +463,7 @@ const Products = ()=>{
                                             children: "Cantidad:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                            lineNumber: 283,
+                                            lineNumber: 326,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -445,7 +478,7 @@ const Products = ()=>{
                                                     children: "-"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                                    lineNumber: 285,
+                                                    lineNumber: 328,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -453,7 +486,7 @@ const Products = ()=>{
                                                     children: cantidad
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                                    lineNumber: 294,
+                                                    lineNumber: 337,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -465,19 +498,19 @@ const Products = ()=>{
                                                     children: "+"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                                    lineNumber: 297,
+                                                    lineNumber: 340,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                            lineNumber: 284,
+                                            lineNumber: 327,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                    lineNumber: 282,
+                                    lineNumber: 325,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -489,13 +522,14 @@ const Products = ()=>{
                                             children: "Ver detalles"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                            lineNumber: 311,
+                                            lineNumber: 354,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                             onClick: (e)=>{
                                                 e.preventDefault();
-                                                agregarALista(producto, cantidad);
+                                                const cantidadActual = cantidades[producto.id] || 1;
+                                                agregarALista(producto, cantidadActual);
                                             },
                                             className: "bg-red-600 text-white py-2 px-3 rounded text-center hover:bg-red-700 transition-colors flex items-center justify-center text-sm",
                                             children: [
@@ -512,37 +546,37 @@ const Products = ()=>{
                                                         d: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                                        lineNumber: 333,
+                                                        lineNumber: 377,
                                                         columnNumber: 23
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                                    lineNumber: 326,
+                                                    lineNumber: 370,
                                                     columnNumber: 21
                                                 }, this),
                                                 "Agregar a la lista"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                            lineNumber: 319,
+                                            lineNumber: 362,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                                    lineNumber: 310,
+                                    lineNumber: 353,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, producto.id, true, {
                             fileName: "[project]/src/app/components/sliderproducts.tsx",
-                            lineNumber: 252,
+                            lineNumber: 279,
                             columnNumber: 15
                         }, this);
                     })
                 }, void 0, false, {
                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                    lineNumber: 244,
+                    lineNumber: 271,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -553,7 +587,7 @@ const Products = ()=>{
                         xmlns: "http://www.w3.org/2000/svg",
                         className: "h-6 w-6",
                         fill: "none",
-                        viewBox: "0 0 24 24",
+                        viewBox: "0 24 24",
                         stroke: "currentColor",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                             strokeLinecap: "round",
@@ -562,17 +596,17 @@ const Products = ()=>{
                             d: "M9 5l7 7-7 7"
                         }, void 0, false, {
                             fileName: "[project]/src/app/components/sliderproducts.tsx",
-                            lineNumber: 364,
+                            lineNumber: 408,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/sliderproducts.tsx",
-                        lineNumber: 357,
+                        lineNumber: 401,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                    lineNumber: 349,
+                    lineNumber: 393,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -585,23 +619,23 @@ const Products = ()=>{
                             "aria-label": `Ir a página ${index + 1}`
                         }, index, false, {
                             fileName: "[project]/src/app/components/sliderproducts.tsx",
-                            lineNumber: 378,
+                            lineNumber: 422,
                             columnNumber: 13
                         }, this))
                 }, void 0, false, {
                     fileName: "[project]/src/app/components/sliderproducts.tsx",
-                    lineNumber: 374,
+                    lineNumber: 418,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/components/sliderproducts.tsx",
-            lineNumber: 220,
+            lineNumber: 247,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/components/sliderproducts.tsx",
-        lineNumber: 218,
+        lineNumber: 245,
         columnNumber: 5
     }, this);
 };

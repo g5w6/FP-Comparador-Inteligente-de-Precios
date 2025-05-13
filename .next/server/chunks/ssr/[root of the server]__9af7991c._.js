@@ -277,18 +277,18 @@ const Cart = ()=>{
     const aplicarCambiosAlCarrito = async (alternativa)=>{
         try {
             setAplicandoCambios(true);
-            // 1. Vaciar el carrito actual
-            clearCart();
-            // 2. Para cada producto en la alternativa, necesitamos obtener la información completa
+            // Array temporal para almacenar los productos antes de añadirlos
+            const nuevosProductos = [];
+            // 1. Para cada producto en la alternativa, preparamos la información
             for (const producto of alternativa.productos){
                 // Obtener información detallada del producto
                 const { data: productoData } = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$supabaseClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["supabase"].from("productos").select("*").eq("id_producto", producto.id).single();
                 if (productoData) {
                     // Obtener información detallada del establecimiento
                     const { data: establecimientoData } = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$supabaseClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["supabase"].from("establecimientos").select("*").eq("id_establecimiento", alternativa.id_establecimiento).single();
-                    // Añadir el producto al carrito
+                    // Crear el objeto del producto para añadir al carrito
                     if (establecimientoData) {
-                        addItem({
+                        nuevosProductos.push({
                             id: producto.id,
                             nombre: productoData.nombre_producto,
                             precio: producto.precio,
@@ -301,9 +301,16 @@ const Cart = ()=>{
                     }
                 }
             }
-            // 3. Mostrar mensaje de éxito (opcional)
-            alert("¡Carrito actualizado con la alternativa seleccionada!");
-            // 4. Cerrar la sección de comparación
+            // 2. Vaciamos el carrito
+            clearCart();
+            // 3. Pequeña pausa para asegurar que el estado se actualice
+            await new Promise((resolve)=>setTimeout(resolve, 100));
+            // 4. Añadimos los productos uno por uno
+            for (const producto of nuevosProductos){
+                addItem(producto);
+            }
+            // 5. Mostrar mensaje de éxito
+            // 6. Cerrar la sección de comparación
             setMostrarComparacion(false);
         } catch (error) {
             console.error("Error al aplicar cambios al carrito:", error);
@@ -415,7 +422,7 @@ const Cart = ()=>{
                             className: "animate-spin rounded-full h-6 w-6 border-t-2 border-r-2 border-red-600"
                         }, void 0, false, {
                             fileName: "[project]/src/app/components/vistacarro.tsx",
-                            lineNumber: 284,
+                            lineNumber: 294,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -423,18 +430,18 @@ const Cart = ()=>{
                             children: "Comparando precios..."
                         }, void 0, false, {
                             fileName: "[project]/src/app/components/vistacarro.tsx",
-                            lineNumber: 285,
+                            lineNumber: 295,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/components/vistacarro.tsx",
-                    lineNumber: 283,
+                    lineNumber: 293,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                lineNumber: 282,
+                lineNumber: 292,
                 columnNumber: 9
             }, this);
         }
@@ -446,12 +453,12 @@ const Cart = ()=>{
                     children: errorComparacion
                 }, void 0, false, {
                     fileName: "[project]/src/app/components/vistacarro.tsx",
-                    lineNumber: 294,
+                    lineNumber: 304,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                lineNumber: 293,
+                lineNumber: 303,
                 columnNumber: 9
             }, this);
         }
@@ -463,12 +470,12 @@ const Cart = ()=>{
                     children: "No se encontraron alternativas más económicas para tu lista de compras."
                 }, void 0, false, {
                     fileName: "[project]/src/app/components/vistacarro.tsx",
-                    lineNumber: 302,
+                    lineNumber: 312,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                lineNumber: 301,
+                lineNumber: 311,
                 columnNumber: 9
             }, this);
         }
@@ -481,7 +488,7 @@ const Cart = ()=>{
                         children: "Alternativas más económicas"
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                        lineNumber: 313,
+                        lineNumber: 323,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -499,7 +506,7 @@ const Cart = ()=>{
                                                         children: alternativa.establecimiento
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                        lineNumber: 326,
+                                                        lineNumber: 336,
                                                         columnNumber: 21
                                                     }, this),
                                                     alternativa.municipio && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -507,7 +514,7 @@ const Cart = ()=>{
                                                         children: alternativa.municipio
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                        lineNumber: 330,
+                                                        lineNumber: 340,
                                                         columnNumber: 23
                                                     }, this),
                                                     alternativa.direccion && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -515,13 +522,13 @@ const Cart = ()=>{
                                                         children: alternativa.direccion
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                        lineNumber: 335,
+                                                        lineNumber: 345,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                lineNumber: 325,
+                                                lineNumber: 335,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -534,18 +541,18 @@ const Cart = ()=>{
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                    lineNumber: 341,
+                                                    lineNumber: 351,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                lineNumber: 340,
+                                                lineNumber: 350,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                        lineNumber: 324,
+                                        lineNumber: 334,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -555,7 +562,7 @@ const Cart = ()=>{
                                                 children: "Total:"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                lineNumber: 347,
+                                                lineNumber: 357,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -566,13 +573,13 @@ const Cart = ()=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                lineNumber: 348,
+                                                lineNumber: 358,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                        lineNumber: 346,
+                                        lineNumber: 356,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -599,7 +606,7 @@ const Cart = ()=>{
                                                                 strokeWidth: "4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 382,
                                                                 columnNumber: 27
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -608,47 +615,47 @@ const Cart = ()=>{
                                                                 d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                                lineNumber: 380,
+                                                                lineNumber: 390,
                                                                 columnNumber: 27
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                        lineNumber: 366,
+                                                        lineNumber: 376,
                                                         columnNumber: 25
                                                     }, this),
                                                     "Actualizando..."
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                lineNumber: 365,
+                                                lineNumber: 375,
                                                 columnNumber: 23
                                             }, this) : "Aplicar esta opción"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/components/vistacarro.tsx",
-                                            lineNumber: 355,
+                                            lineNumber: 365,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                        lineNumber: 354,
+                                        lineNumber: 364,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, index, true, {
                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                lineNumber: 320,
+                                lineNumber: 330,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                        lineNumber: 318,
+                        lineNumber: 328,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                lineNumber: 312,
+                lineNumber: 322,
                 columnNumber: 9
             }, this);
         }
@@ -678,12 +685,12 @@ const Cart = ()=>{
                                     d: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/vistacarro.tsx",
-                                    lineNumber: 420,
+                                    lineNumber: 430,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                lineNumber: 413,
+                                lineNumber: 423,
                                 columnNumber: 11
                             }, this),
                             "Mi Lista de Compras (",
@@ -692,7 +699,7 @@ const Cart = ()=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                        lineNumber: 412,
+                        lineNumber: 422,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -711,23 +718,23 @@ const Cart = ()=>{
                                 d: "M6 18L18 6M6 6l12 12"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                lineNumber: 440,
+                                lineNumber: 450,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/components/vistacarro.tsx",
-                            lineNumber: 433,
+                            lineNumber: 443,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                        lineNumber: 429,
+                        lineNumber: 439,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                lineNumber: 411,
+                lineNumber: 421,
                 columnNumber: 7
             }, this),
             !items || items.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -746,12 +753,12 @@ const Cart = ()=>{
                             d: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                         }, void 0, false, {
                             fileName: "[project]/src/app/components/vistacarro.tsx",
-                            lineNumber: 460,
+                            lineNumber: 470,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                        lineNumber: 453,
+                        lineNumber: 463,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -759,7 +766,7 @@ const Cart = ()=>{
                         children: "Tu lista de compras está vacía"
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                        lineNumber: 467,
+                        lineNumber: 477,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -768,13 +775,13 @@ const Cart = ()=>{
                         children: "Seguir comprando"
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                        lineNumber: 470,
+                        lineNumber: 480,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                lineNumber: 452,
+                lineNumber: 462,
                 columnNumber: 9
             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                 children: [
@@ -798,17 +805,17 @@ const Cart = ()=>{
                                                 d: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                lineNumber: 493,
+                                                lineNumber: 503,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/components/vistacarro.tsx",
-                                            lineNumber: 486,
+                                            lineNumber: 496,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                        lineNumber: 485,
+                                        lineNumber: 495,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -819,7 +826,7 @@ const Cart = ()=>{
                                                 children: item.nombre
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                lineNumber: 502,
+                                                lineNumber: 512,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -830,7 +837,7 @@ const Cart = ()=>{
                                                         children: item.establecimiento
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                        lineNumber: 507,
+                                                        lineNumber: 517,
                                                         columnNumber: 21
                                                     }, this),
                                                     item.direccion_establecimiento && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -838,7 +845,7 @@ const Cart = ()=>{
                                                         children: item.direccion_establecimiento
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                        lineNumber: 511,
+                                                        lineNumber: 521,
                                                         columnNumber: 23
                                                     }, this),
                                                     item.municipio_establecimiento && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -846,13 +853,13 @@ const Cart = ()=>{
                                                         children: item.municipio_establecimiento
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                        lineNumber: 516,
+                                                        lineNumber: 526,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                lineNumber: 506,
+                                                lineNumber: 516,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -867,7 +874,7 @@ const Cart = ()=>{
                                                                 children: "-"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                                lineNumber: 524,
+                                                                lineNumber: 534,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -875,7 +882,7 @@ const Cart = ()=>{
                                                                 children: item.cantidad || 1
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                                lineNumber: 536,
+                                                                lineNumber: 546,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -884,13 +891,13 @@ const Cart = ()=>{
                                                                 children: "+"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                                lineNumber: 539,
+                                                                lineNumber: 549,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                        lineNumber: 523,
+                                                        lineNumber: 533,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -904,7 +911,7 @@ const Cart = ()=>{
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                                lineNumber: 553,
+                                                                lineNumber: 563,
                                                                 columnNumber: 23
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -916,19 +923,19 @@ const Cart = ()=>{
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                                lineNumber: 556,
+                                                                lineNumber: 566,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                        lineNumber: 552,
+                                                        lineNumber: 562,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                lineNumber: 522,
+                                                lineNumber: 532,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -937,24 +944,24 @@ const Cart = ()=>{
                                                 children: "Eliminar"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                                lineNumber: 561,
+                                                lineNumber: 571,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                        lineNumber: 501,
+                                        lineNumber: 511,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, `${item.id}-${item.establecimiento}-${index}`, true, {
                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                lineNumber: 481,
+                                lineNumber: 491,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                        lineNumber: 479,
+                        lineNumber: 489,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -968,7 +975,7 @@ const Cart = ()=>{
                                         children: "Subtotal:"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                        lineNumber: 574,
+                                        lineNumber: 584,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -979,13 +986,13 @@ const Cart = ()=>{
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                        lineNumber: 575,
+                                        lineNumber: 585,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                lineNumber: 573,
+                                lineNumber: 583,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1001,12 +1008,12 @@ const Cart = ()=>{
                                     children: mostrarComparacion ? "Ocultar comparación de precios" : "Comparar precios en otras tiendas"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/components/vistacarro.tsx",
-                                    lineNumber: 580,
+                                    lineNumber: 590,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                lineNumber: 579,
+                                lineNumber: 589,
                                 columnNumber: 13
                             }, this),
                             mostrarComparacion && renderComparacion(),
@@ -1020,7 +1027,7 @@ const Cart = ()=>{
                                         children: "Proceder al pago"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                        lineNumber: 599,
+                                        lineNumber: 609,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1029,19 +1036,19 @@ const Cart = ()=>{
                                         children: "Vaciar lista"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                                        lineNumber: 606,
+                                        lineNumber: 616,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/components/vistacarro.tsx",
-                                lineNumber: 598,
+                                lineNumber: 608,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/components/vistacarro.tsx",
-                        lineNumber: 572,
+                        lineNumber: 582,
                         columnNumber: 11
                     }, this)
                 ]
@@ -1049,7 +1056,7 @@ const Cart = ()=>{
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/components/vistacarro.tsx",
-        lineNumber: 405,
+        lineNumber: 415,
         columnNumber: 5
     }, this);
 };
@@ -1076,6 +1083,12 @@ const Categorias = ()=>{
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [connectionStatus, setConnectionStatus] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("Comprobando conexión...");
+    // Estado para controlar si estamos en el cliente
+    const [isClient, setIsClient] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        // Marcamos que estamos en el cliente después del primer render
+        setIsClient(true);
+    }, []);
     // Test de conexión al montar el componente
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         async function testConnection() {
@@ -1159,126 +1172,127 @@ const Categorias = ()=>{
             setOpenDropdown(category);
         }
     };
+    // Renderizar un estado de carga consistente
+    if (!isClient || loading) {
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "flex justify-center items-center py-4",
+            children: "Cargando categorías y productos..."
+        }, void 0, false, {
+            fileName: "[project]/src/app/index/categorias.tsx",
+            lineNumber: 156,
+            columnNumber: 7
+        }, this);
+    }
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: `text-sm mb-2 p-2 text-center ${connectionStatus.includes("✅") ? "bg-green-100 text-green-800" : connectionStatus.includes("❌") ? "bg-red-100 text-red-800" : "bg-blue-100 text-blue-800"}`,
-                children: connectionStatus
-            }, void 0, false, {
-                fileName: "[project]/src/app/index/categorias.tsx",
-                lineNumber: 148,
-                columnNumber: 7
-            }, this),
-            loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex justify-center items-center py-4",
-                children: "Cargando categorías y productos..."
-            }, void 0, false, {
-                fileName: "[project]/src/app/index/categorias.tsx",
-                lineNumber: 161,
-                columnNumber: 9
-            }, this) : error ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex justify-center items-center py-4 text-red-600",
-                children: [
-                    "Error: ",
-                    error
-                ]
-            }, void 0, true, {
-                fileName: "[project]/src/app/index/categorias.tsx",
-                lineNumber: 165,
-                columnNumber: 9
-            }, this) : categories.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex justify-center items-center py-4",
-                children: "No se encontraron categorías"
-            }, void 0, false, {
-                fileName: "[project]/src/app/index/categorias.tsx",
-                lineNumber: 169,
-                columnNumber: 9
-            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex justify-center items-center gap-15 text-lg pt-4 pb-4",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                        href: "#mejores-ofertas",
-                        className: "cursor-pointer hover:text-red-600 transition-colors mx-4",
-                        children: "Ofertas"
-                    }, void 0, false, {
-                        fileName: "[project]/src/app/index/categorias.tsx",
-                        lineNumber: 174,
-                        columnNumber: 11
-                    }, this),
-                    categories.map((category)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "relative mx-4",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    onClick: ()=>handleDropdownToggle(category.name),
-                                    className: "flex items-center hover:text-red-600 transition-colors",
-                                    children: [
-                                        category.name,
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-                                            className: `ml-1 w-4 h-4 transition-transform ${openDropdown === category.name ? "rotate-180" : ""}`,
-                                            fill: "none",
-                                            stroke: "currentColor",
-                                            viewBox: "0 0 24 24",
-                                            xmlns: "http://www.w3.org/2000/svg",
-                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                                                strokeLinecap: "round",
-                                                strokeLinejoin: "round",
-                                                strokeWidth: "2",
-                                                d: "M19 9l-7 7-7-7"
-                                            }, void 0, false, {
-                                                fileName: "[project]/src/app/index/categorias.tsx",
-                                                lineNumber: 196,
-                                                columnNumber: 19
-                                            }, this)
+        children: loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "flex justify-center items-center py-4",
+            children: "Cargando categorías y productos..."
+        }, void 0, false, {
+            fileName: "[project]/src/app/index/categorias.tsx",
+            lineNumber: 178,
+            columnNumber: 9
+        }, this) : error ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "flex justify-center items-center py-4 text-red-600",
+            children: [
+                "Error: ",
+                error
+            ]
+        }, void 0, true, {
+            fileName: "[project]/src/app/index/categorias.tsx",
+            lineNumber: 182,
+            columnNumber: 9
+        }, this) : categories.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "flex justify-center items-center py-4",
+            children: "No se encontraron categorías"
+        }, void 0, false, {
+            fileName: "[project]/src/app/index/categorias.tsx",
+            lineNumber: 186,
+            columnNumber: 9
+        }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "flex justify-center items-center gap-15 text-lg pt-4 pb-4",
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                    href: "#mejores-ofertas",
+                    className: "cursor-pointer hover:text-red-600 transition-colors mx-4",
+                    children: "Ofertas"
+                }, void 0, false, {
+                    fileName: "[project]/src/app/index/categorias.tsx",
+                    lineNumber: 191,
+                    columnNumber: 11
+                }, this),
+                categories.map((category)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "relative mx-4",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: ()=>handleDropdownToggle(category.name),
+                                className: "flex items-center hover:text-red-600 transition-colors",
+                                children: [
+                                    category.name,
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                        className: `ml-1 w-4 h-4 transition-transform ${openDropdown === category.name ? "rotate-180" : ""}`,
+                                        fill: "none",
+                                        stroke: "currentColor",
+                                        viewBox: "0 0 24 24",
+                                        xmlns: "http://www.w3.org/2000/svg",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                            strokeLinecap: "round",
+                                            strokeLinejoin: "round",
+                                            strokeWidth: "2",
+                                            d: "M19 9l-7 7-7-7"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/index/categorias.tsx",
-                                            lineNumber: 187,
-                                            columnNumber: 17
+                                            lineNumber: 213,
+                                            columnNumber: 19
                                         }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/app/index/categorias.tsx",
-                                    lineNumber: 182,
-                                    columnNumber: 15
-                                }, this),
-                                openDropdown === category.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "absolute z-50 mt-2 w-64 bg-white rounded-md shadow-lg py-1 text-base max-h-96 overflow-y-auto left-0",
-                                    children: category.items.length > 0 ? category.items.map((item, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                                            href: `/productname?nombre=${encodeURIComponent(item)}`,
-                                            className: "block px-4 py-2 text-gray-800 hover:bg-gray-100",
-                                            children: item
-                                        }, index, false, {
-                                            fileName: "[project]/src/app/index/categorias.tsx",
-                                            lineNumber: 208,
-                                            columnNumber: 23
-                                        }, this)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "block px-4 py-2 text-gray-500 italic",
-                                        children: "No hay productos en esta categoría"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/index/categorias.tsx",
-                                        lineNumber: 217,
-                                        columnNumber: 21
+                                        lineNumber: 204,
+                                        columnNumber: 17
                                     }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/app/index/categorias.tsx",
+                                lineNumber: 199,
+                                columnNumber: 15
+                            }, this),
+                            openDropdown === category.name && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "absolute z-50 mt-2 w-64 bg-white rounded-md shadow-lg py-1 text-base max-h-96 overflow-y-auto left-0",
+                                children: category.items.length > 0 ? category.items.map((item, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                        href: `/productname?nombre=${encodeURIComponent(item)}`,
+                                        className: "block px-4 py-2 text-gray-800 hover:bg-gray-100",
+                                        children: item
+                                    }, index, false, {
+                                        fileName: "[project]/src/app/index/categorias.tsx",
+                                        lineNumber: 225,
+                                        columnNumber: 23
+                                    }, this)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "block px-4 py-2 text-gray-500 italic",
+                                    children: "No hay productos en esta categoría"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/index/categorias.tsx",
-                                    lineNumber: 205,
-                                    columnNumber: 17
+                                    lineNumber: 234,
+                                    columnNumber: 21
                                 }, this)
-                            ]
-                        }, category.id, true, {
-                            fileName: "[project]/src/app/index/categorias.tsx",
-                            lineNumber: 181,
-                            columnNumber: 13
-                        }, this))
-                ]
-            }, void 0, true, {
-                fileName: "[project]/src/app/index/categorias.tsx",
-                lineNumber: 173,
-                columnNumber: 9
-            }, this)
-        ]
-    }, void 0, true, {
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/index/categorias.tsx",
+                                lineNumber: 222,
+                                columnNumber: 17
+                            }, this)
+                        ]
+                    }, category.id, true, {
+                        fileName: "[project]/src/app/index/categorias.tsx",
+                        lineNumber: 198,
+                        columnNumber: 13
+                    }, this))
+            ]
+        }, void 0, true, {
+            fileName: "[project]/src/app/index/categorias.tsx",
+            lineNumber: 190,
+            columnNumber: 9
+        }, this)
+    }, void 0, false, {
         fileName: "[project]/src/app/index/categorias.tsx",
-        lineNumber: 146,
+        lineNumber: 163,
         columnNumber: 5
     }, this);
 };

@@ -4169,12 +4169,6 @@
   }
 
   @media (width >= 48rem) {
-    .md\:w-96 {
-      width: calc(var(--spacing) * 96);
-    }
-  }
-
-  @media (width >= 48rem) {
     .md\:w-\[28rem\] {
       width: 28rem;
     }
