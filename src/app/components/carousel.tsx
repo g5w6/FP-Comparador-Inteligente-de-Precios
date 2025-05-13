@@ -4,9 +4,9 @@ import { useEffect, useState } from "react"; // Importa hooks de React
 
 // Array de rutas de las imágenes del carrusel
 const carouselImages = [
-  "/christopher-gower-m_HRfLhgABo-unsplash.jpg",
-  "/farzad-p-xSl33Wxyc-unsplash.jpg",
-  "/ferenc-almasi-eYpcLDXHVb0-unsplash.jpg",
+  "/portadaCarousel1.jpg",
+  "/portadaCarousel2.jpg",
+  "/portadaCarousel3.jpg",
 ];
 
 const Carousel = ({
@@ -26,7 +26,7 @@ const Carousel = ({
     // Configura un intervalo para cambiar la imagen cada 8 segundos
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % carouselImages.length);
-    }, 50000); // Cambia de imagen cada 8 segundos
+    }, 5000); // Cambia de imagen cada 5 segundos
 
     // Limpia el intervalo cuando el componente se desmonta
     return () => clearInterval(interval);

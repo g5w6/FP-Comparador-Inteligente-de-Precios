@@ -30,6 +30,14 @@ const Categorias = () => {
     "Comprobando conexión..."
   );
 
+  // Estado para controlar si estamos en el cliente
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    // Marcamos que estamos en el cliente después del primer render
+    setIsClient(true);
+  }, []);
+
   // Test de conexión al montar el componente
   useEffect(() => {
     async function testConnection() {
@@ -142,10 +150,19 @@ const Categorias = () => {
     }
   };
 
+  // Renderizar un estado de carga consistente
+  if (!isClient || loading) {
+    return (
+      <div className="flex justify-center items-center py-4">
+        Cargando categorías y productos...
+      </div>
+    );
+  }
+
   return (
     <div>
-      {/* Añadir barra de estado de conexión */}
-      <div
+      {/* //     {/* Añadir barra de estado de conexión */}
+      {/* <div
         className={`text-sm mb-2 p-2 text-center ${
           connectionStatus.includes("✅")
             ? "bg-green-100 text-green-800"
@@ -155,7 +172,7 @@ const Categorias = () => {
         }`}
       >
         {connectionStatus}
-      </div>
+      </div> */}
 
       {loading ? (
         <div className="flex justify-center items-center py-4">

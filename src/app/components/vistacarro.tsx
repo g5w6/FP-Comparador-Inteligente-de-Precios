@@ -80,10 +80,10 @@ const Cart = () => {
     try {
       setAplicandoCambios(true);
 
-      // 1. Vaciar el carrito actual
-      clearCart();
+      // Array temporal para almacenar los productos antes de añadirlos
+      const nuevosProductos = [];
 
-      // 2. Para cada producto en la alternativa, necesitamos obtener la información completa
+      // 1. Para cada producto en la alternativa, preparamos la información
       for (const producto of alternativa.productos) {
         // Obtener información detallada del producto
         const { data: productoData } = await supabase
@@ -100,9 +100,9 @@ const Cart = () => {
             .eq("id_establecimiento", alternativa.id_establecimiento)
             .single();
 
-          // Añadir el producto al carrito
+          // Crear el objeto del producto para añadir al carrito
           if (establecimientoData) {
-            addItem({
+            nuevosProductos.push({
               id: producto.id,
               nombre: productoData.nombre_producto,
               precio: producto.precio,
@@ -116,10 +116,20 @@ const Cart = () => {
         }
       }
 
-      // 3. Mostrar mensaje de éxito (opcional)
-      alert("¡Carrito actualizado con la alternativa seleccionada!");
+      // 2. Vaciamos el carrito
+      clearCart();
 
-      // 4. Cerrar la sección de comparación
+      // 3. Pequeña pausa para asegurar que el estado se actualice
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // 4. Añadimos los productos uno por uno
+      for (const producto of nuevosProductos) {
+        addItem(producto);
+      }
+
+      // 5. Mostrar mensaje de éxito
+
+      // 6. Cerrar la sección de comparación
       setMostrarComparacion(false);
     } catch (error) {
       console.error("Error al aplicar cambios al carrito:", error);

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useCart } from "../index/carrito";
 import { supabase } from "../lib/supabaseClient";
 
-// Definir interfaces para los datos
+// Actualizar las interfaces para incluir campos de imagen
 interface Producto {
   id_producto: number;
   nombre_producto: string;
@@ -20,14 +20,21 @@ interface Precio {
   id_establecimiento: number;
   establecimientos?: {
     nombre_establecimiento: string;
+    direccion_establecimiento?: string;
+    municipio_establecimiento?: string;
   };
 }
 
+// Actualizar la interfaz ProductoConPrecio para incluir imagen
 interface ProductoConPrecio {
   id: number;
   nombre: string;
   precio: number;
   establecimiento: string;
+  direccion_establecimiento?: string;
+  municipio_establecimiento?: string;
+  id_establecimiento: number;
+  imagen?: string; // URL de la imagen
 }
 
 const Products = () => {
@@ -67,7 +74,7 @@ const Products = () => {
       try {
         console.log("Obteniendo productos aleatorios...");
 
-        // 1. Obtener todos los productos
+        // 1. Obtener todos los productos incluyendo el id_img
         const { data: productosData, error: productosError } = await supabase
           .from("productos")
           .select("id_producto, nombre_producto");
@@ -81,11 +88,11 @@ const Products = () => {
           return;
         }
 
-        // 2. Seleccionar 8 productos aleatorios (en lugar de 5)
+        // 2. Seleccionar 8 productos aleatorios
         const productosAleatorios = getRandomItems(productosData, 8);
         console.log("Productos aleatorios seleccionados:", productosAleatorios);
 
-        // 3. Para cada producto aleatorio, obtener su mejor precio
+        // 3. Para cada producto aleatorio, obtener su mejor precio y su imagen
         const productosConPrecios: ProductoConPrecio[] = [];
         const cantidadesIniciales: { [key: number]: number } = {};
 
@@ -96,7 +103,12 @@ const Products = () => {
             .select(
               `
               precio_producto,
-              establecimientos:id_establecimiento(nombre_establecimiento)
+              id_establecimiento,
+              establecimientos(
+                nombre_establecimiento, 
+                direccion_establecimiento, 
+                municipio_establecimiento
+              )
             `
             )
             .eq("id_producto", producto.id_producto)
@@ -111,6 +123,9 @@ const Products = () => {
             continue;
           }
 
+          // Obtener la imagen si existe
+          let imageUrl: string | undefined = undefined;
+
           if (preciosData && preciosData.length > 0) {
             const precio = preciosData[0];
             productosConPrecios.push({
@@ -120,6 +135,11 @@ const Products = () => {
               establecimiento:
                 precio.establecimientos?.nombre_establecimiento ||
                 "Desconocido",
+              direccion_establecimiento:
+                precio.establecimientos?.direccion_establecimiento,
+              municipio_establecimiento:
+                precio.establecimientos?.municipio_establecimiento,
+              id_establecimiento: precio.id_establecimiento,
             });
 
             // Inicializar cantidad para este producto
@@ -127,7 +147,7 @@ const Products = () => {
           }
         }
 
-        console.log("Productos con precios:", productosConPrecios);
+        console.log("Productos con precios e imágenes:", productosConPrecios);
         setProductos(productosConPrecios);
         setCantidades(cantidadesIniciales);
       } catch (error) {
@@ -141,13 +161,12 @@ const Products = () => {
     fetchProductosAleatorios();
   }, []);
 
-  // Función para obtener elementos aleatorios de un array
+  // Resto de funciones auxiliares
   const getRandomItems = (arr: any[], count: number) => {
     const shuffled = [...arr].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
   };
 
-  // Función para incrementar la cantidad
   const incrementarCantidad = (productoId: number) => {
     setCantidades((prev) => ({
       ...prev,
@@ -155,7 +174,6 @@ const Products = () => {
     }));
   };
 
-  // Función para decrementar la cantidad (mínimo 1)
   const decrementarCantidad = (productoId: number) => {
     setCantidades((prev) => ({
       ...prev,
@@ -165,8 +183,15 @@ const Products = () => {
 
   const { addItem, openCart } = useCart();
 
-  // Reemplazar la función agregarALista
+  // Actualizar función agregarALista para incluir correctamente la cantidad
   const agregarALista = (producto: ProductoConPrecio, cantidad: number) => {
+    // Verificar que la cantidad sea al menos 1
+    const cantidadFinal = Math.max(1, cantidad);
+
+    console.log(
+      `Añadiendo ${cantidadFinal} unidades de ${producto.nombre} al carrito`
+    );
+
     addItem(
       {
         id: producto.id,
@@ -174,9 +199,11 @@ const Products = () => {
         precio: producto.precio,
         establecimiento: producto.establecimiento,
       },
-      cantidad
-    );
-    openCart(); // Abre el carrito al agregar un producto
+      cantidadFinal
+    ); // Aquí pasas la cantidad como segundo parámetro
+
+    // Abre el carrito al agregar un producto
+    openCart();
   };
 
   // Funciones para el slider
@@ -253,11 +280,22 @@ const Products = () => {
                 key={producto.id}
                 className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col h-[500px] min-w-[275px] max-w-[300px] flex-1 overflow-hidden"
               >
-                {/* Imagen */}
-                <div className="h-40 bg-gray-200 rounded-lg mb-4 flex items-center justify-center flex-shrink-0">
-                  <span className="text-gray-400 text-center px-2">
-                    {producto.nombre}
-                  </span>
+                {/* Imagen - Ahora usamos Image de Next.js cuando hay imagen disponible */}
+                <div className="h-40 bg-gray-100 rounded-lg mb-4 flex items-center justify-center flex-shrink-0 relative overflow-hidden">
+                  {producto.imagen ? (
+                    <Image
+                      src={producto.imagen}
+                      alt={producto.nombre}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      style={{ objectFit: "contain" }}
+                      className="p-2"
+                    />
+                  ) : (
+                    <span className="text-gray-400 text-center px-2">
+                      {producto.nombre}
+                    </span>
+                  )}
                 </div>
 
                 {/* Información del producto - Contenedor con overflow hidden */}
@@ -272,6 +310,11 @@ const Products = () => {
                     <p className="text-gray-800 font-medium text-sm mb-2 break-words line-clamp-2">
                       {producto.establecimiento}
                     </p>
+                    {producto.municipio_establecimiento && (
+                      <p className="text-gray-500 text-xs">
+                        {producto.municipio_establecimiento}
+                      </p>
+                    )}
                   </div>
                   <p className="text-red-600 font-bold text-xl">
                     ${producto.precio.toFixed(2)}
@@ -319,7 +362,8 @@ const Products = () => {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      agregarALista(producto, cantidad);
+                      const cantidadActual = cantidades[producto.id] || 1;
+                      agregarALista(producto, cantidadActual);
                     }}
                     className="bg-red-600 text-white py-2 px-3 rounded text-center hover:bg-red-700 transition-colors flex items-center justify-center text-sm"
                   >
@@ -358,7 +402,7 @@ const Products = () => {
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
             fill="none"
-            viewBox="0 0 24 24"
+            viewBox="0 24 24"
             stroke="currentColor"
           >
             <path

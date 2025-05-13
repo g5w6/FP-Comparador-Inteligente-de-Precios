@@ -85,50 +85,6 @@ const SliderProducts: React.FC<SliderProductsProps> = ({
   );
 };
 
-//  Componente Products (lista de productos)
-const Sproduct = () => {
-  const products = [
-    {
-      image: "/high-angle-tasty-fruits-arrangement.jpg",
-      name: "Aguacates Hass en su punto.",
-      oldPrice: 79.99,
-      newPrice: 71.99,
-    },
-    {
-      image: "/fresh-banana-orange-strawberries-blue-board-min.jpg",
-      name: "Muslos de pollo sin hueso.",
-      oldPrice: 76.5,
-      newPrice: 68.85,
-    },
-    {
-      image: "/close-up-assortment-organic-fruits-min.jpg",
-      name: "Filete de atún 0.5 kg.",
-      oldPrice: 399.99,
-      newPrice: 359.99,
-    },
-    {
-      image: "/farzad-p-xSl33Wxyc-unsplash.jpg",
-      name: "Queso crema para untar 8 oz.",
-      oldPrice: 49.99,
-      newPrice: 44.99,
-    },
-    {
-      image: "/high-angle-tasty-fruits-arrangement.jpg",
-      name: "Queso crema para untar 8 oz.",
-      oldPrice: 49.99,
-      newPrice: 44.99,
-    },
-  ];
-
-  return (
-    <div className="flex gap-4 overflow-x-auto p-5">
-      {products.map((product, index) => (
-        <SliderProducts key={index} {...product} />
-      ))}
-    </div>
-  );
-};
-
 interface PrecioProps {
   productoId: number;
   establecimiento: string;
