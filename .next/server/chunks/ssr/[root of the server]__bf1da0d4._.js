@@ -1017,8 +1017,7 @@ const Header = ()=>{
                         alt: "Logo Precio Justo",
                         width: 24,
                         height: 24,
-                        className: "w-5 h-5 sm:w-6 sm:h-6" // Mismas clases que los iconos
-                        ,
+                        className: "w-5 h-5 sm:w-6 sm:h-6",
                         priority: true
                     }, void 0, false, {
                         fileName: "[project]/src/app/index/header.tsx",
