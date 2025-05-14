@@ -44,12 +44,11 @@ node -v # Should print "v22.15.0".
 
 npm -v # Should print "10.9.2".
 
-````
-
 Crear proyecto con Next.js
+
 ```bash
 npx create-next-app@latest my-next-app
-````
+```
 
 al utilizar ese comando se iniciará la creación de tu proyecto, y en ahí mismo podrás instalas dependencias como tailwindcss y typescript.
 
