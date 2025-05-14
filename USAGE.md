@@ -25,7 +25,3 @@ Esta guía proporciona información sobre cómo utilizar las diferentes funciona
      direccion y municipio en donde se encuentran, la tercera tabla es la de images en donde deben estar las imagenes de los productos,
      la cuarta tabla es la de precios en donde se almacenan los id de los productos con sus respectivos precios y establecimientos y por
      ultimo la quinta tabla que es la de productos que almacena los productos existentes en la pagina.
-
-```
-
-```
