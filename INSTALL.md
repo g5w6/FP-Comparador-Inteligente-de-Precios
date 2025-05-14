@@ -44,7 +44,7 @@ node -v # Should print "v22.15.0".
 
 npm -v # Should print "10.9.2".
 
-Crear proyecto con Next.js
+## Crear proyecto con Next.js
 
 ```bash
 npx create-next-app@latest my-next-app
@@ -52,17 +52,19 @@ npx create-next-app@latest my-next-app
 
 al utilizar ese comando se iniciará la creación de tu proyecto, y en ahí mismo podrás instalas dependencias como tailwindcss y typescript.
 
-Para instalas supabase directamente en el proyecto.
+Para instalar supabase directamente en el proyecto.
 
 ```bash
 npm install @supabase/supabase-js
 ```
 
 3. Iniciar el servidor en modo desarrollo:
-   ```bash
-   npm run dev
-   ```
-   El servidor estará disponible en `http://localhost:3000` (o el puerto que configures).
+
+```bash
+npm run dev
+```
+
+El servidor estará disponible en `http://localhost:3000` (o el puerto que configures).
 
 **De esta manera se despliega todo el proyecto, frontend y backend**
 
