@@ -19,18 +19,19 @@ Asegúrate de tener instalado:
 
 1. Navegar al directorio en donde quieras crear el proyecto:
 
-   ```bash
-   cd <ubicación de tu proyecto>
-   ```
+```bash
+cd <ubicación de tu proyecto>
+```
 
 2. Verificar que ya tengas instalada o instalar:
+
    Instalar Node.js, npm y fnm como controlador de versiones
    Instrucciones de instalación de fnm: https://github.com/Schniz/fnm
 
-   ```bash
-   # Download and install fnm:
-   winget install Schniz.fnm
-   ```
+```bash
+# Download and install fnm:
+winget install Schniz.fnm
+```
 
 # Download and install Node.js:
 
