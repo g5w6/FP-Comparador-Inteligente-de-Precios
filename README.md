@@ -29,7 +29,7 @@ El proyecto sigue una arquitectura fullstack:
 - npm, yarn o bun
 - fnm como contralador de versiones
 
-“Cuando instalas Next.JS al momento de la instalación te pregunta que dependencias quieres instalar, yo escogí Tailwind y TypeScript y te lo instala automáticamente.”
+**Cuando instalas Next.JS al momento de la instalación te pregunta que dependencias quieres instalar, yo escogí Tailwind y TypeScript y te lo instala automáticamente.**
 
 ## Estructura de los files del programa
 
